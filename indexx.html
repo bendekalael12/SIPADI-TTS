@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPADI · Arsip Digital Dinas PUPR TTS</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           ROOT VARIABLES
+           ============================================ */
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #eef0ff;
+            --secondary: #7209b7;
+            --accent: #f72585;
+            --success: #06d6a0;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --info: #4cc9f0;
+            --gradient-main: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+            --gradient-success: linear-gradient(135deg, #06d6a0 0%, #118ab2 100%);
+            --gradient-warning: linear-gradient(135deg, #ffd166 0%, #f4a261 100%);
+            --gradient-danger: linear-gradient(135deg, #ef476f 0%, #f72585 100%);
+            --gradient-hero: linear-gradient(135deg, #4361ee 0%, #7209b7 50%, #f72585 100%);
+            --text-dark: #1a1a2e;
+            --text-medium: #4a4a6a;
+            --text-light: #7a7a9a;
+            --bg-light: #f0f2f8;
+            --bg-white: #ffffff;
+            --shadow: 0 8px 32px rgba(67, 97, 238, 0.15);
+            --shadow-hover: 0 12px 48px rgba(67, 97, 238, 0.25);
+            --radius: 20px;
+            --radius-sm: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(ellipse at 10% 20%, rgba(67, 97, 238, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(247, 37, 133, 0.05) 0%, transparent 50%);
+        }
+
+        .app {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem 2rem;
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ============================================
+           TOP BAR
+           ============================================ */
+        .top-bar {
+            background: var(--gradient-main);
+            color: white;
+            padding: 0.4rem 2rem;
+            border-radius: var(--radius) var(--radius) 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            box-shadow: 0 4px 20px rgba(67, 97, 238, 0.3);
+        }
+
+        .top-bar a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .top-bar a:hover {
+            color: white;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.15rem 0.8rem;
+            border-radius: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-indicator i {
+            font-size: 0.5rem;
+            color: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        /* ============================================
+           NAVBAR
+           ============================================ */
+        .navbar {
+            background: var(--bg-white);
+            border-radius: 0 0 var(--radius) var(--radius);
+            padding: 0.6rem 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(67, 97, 238, 0.08);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--text-dark);
+        }
+
+        .logo .logo-images {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo .logo-images img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            border-radius: 6px;
+            background: white;
+            padding: 2px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .logo .logo-divider {
+            width: 2px;
+            height: 30px;
+            background: #e0e4ec;
+        }
+
+        .logo .logo-icon {
+            background: var(--gradient-main);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .logo .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .logo .logo-text .title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .logo .logo-text .subtitle {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: var(--text-light);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-medium);
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            transition: var(--transition);
+            font-size: 0.85rem;
+        }
+
+        .nav-links a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a i {
+            margin-right: 6px;
+        }
+
+        .nav-links .btn-admin {
+            background: var(--gradient-main);
+            color: white;
+            padding: 0.4rem 1.2rem;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.35);
+        }
+
+        .nav-links .btn-admin:hover {
+            background: var(--gradient-main);
+            color: white;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 25px rgba(67, 97, 238, 0.45);
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            background: var(--gradient-hero);
+            border-radius: var(--radius);
+            padding: 2.5rem 3rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(67, 97, 238, 0.3);
+            animation: slideIn 0.6s ease-out;
+            background-size: 300% 300%;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 40%;
+            height: 150%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+
+        .hero-content .badge-hero {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 0.2rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-content h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .hero-content h1 i {
+            margin-right: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.3rem 0.6rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .hero-content p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1rem;
+            margin: 0.5rem 0 0.8rem;
+            max-width: 550px;
+            line-height: 1.6;
+        }
+
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            padding: 0.2rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .hero-badge i {
+            font-size: 0.6rem;
+        }
+
+        .hero-logo {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-logo img {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 6px;
+            border-radius: 8px;
+        }
+
+        .hero-logo .divider {
+            width: 2px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-illustration {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .hero-illustration i {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .hero-illustration span {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ============================================
+           SECTION TITLE
+           ============================================ */
+        .section-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin: 2rem 0 0.5rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 0.4rem;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+        }
+
+        .section-title .title-underline {
+            flex: 1;
+            height: 3px;
+            background: var(--gradient-main);
+            border-radius: 2px;
+            max-width: 80px;
+        }
+
+        .section-desc {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ============================================
+           ARCHIVE CARDS
+           ============================================ */
+        .archive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            border: 1px solid rgba(67, 97, 238, 0.06);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-main);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(67, 97, 238, 0.15);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card .card-icon-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .card-icon.gaji {
+            background: var(--gradient-main);
+        }
+
+        .card-icon.spj {
+            background: var(--gradient-success);
+        }
+
+        .card-icon.pendapatan {
+            background: var(--gradient-warning);
+            color: var(--text-dark);
+        }
+
+        .card .card-badge {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-light);
+            background: var(--bg-light);
+            padding: 0.2rem 0.8rem;
+            border-radius: 2rem;
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            color: var(--text-dark);
+        }
+
+        .card p {
+            color: var(--text-medium);
+            line-height: 1.6;
+            font-size: 0.9rem;
+            flex: 1;
+            margin-bottom: 1.2rem;
+        }
+
+        .card .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 1.4rem;
+            border-radius: 3rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            transition: var(--transition);
+            font-size: 0.85rem;
+            cursor: pointer;
+            align-self: flex-start;
+            background: var(--gradient-main);
+            color: white;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .card .btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 25px rgba(67, 97, 238, 0.4);
+        }
+
+        .card .btn.btn-success {
+            background: var(--gradient-success);
+            box-shadow: 0 4px 15px rgba(6, 214, 160, 0.3);
+        }
+
+        .card .btn.btn-success:hover {
+            box-shadow: 0 6px 25px rgba(6, 214, 160, 0.4);
+        }
+
+        .card .btn.btn-warning {
+            background: var(--gradient-warning);
+            box-shadow: 0 4px 15px rgba(255, 209, 102, 0.3);
+            color: var(--text-dark);
+        }
+
+        .card .btn.btn-warning:hover {
+            box-shadow: 0 6px 25px rgba(255, 209, 102, 0.4);
+        }
+
+        .card .badge-google {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #f1f3f4;
+            color: #5f6368;
+            font-size: 0.65rem;
+            padding: 0.15rem 0.8rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            margin-top: 0.3rem;
+        }
+
+        .card .badge-google i {
+            color: #4285f4;
+        }
+
+        /* ============================================
+           STATS MINI - DATA REAL
+           ============================================ */
+        .stats-mini {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .stat-mini-box {
+            background: var(--bg-white);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.2rem;
+            border: 1px solid rgba(67, 97, 238, 0.06);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+        }
+
+        .stat-mini-box:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-mini-box .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .stat-mini-box .stat-icon.blue { background: var(--gradient-main); }
+        .stat-mini-box .stat-icon.green { background: var(--gradient-success); }
+        .stat-mini-box .stat-icon.pink { background: var(--gradient-danger); }
+        .stat-mini-box .stat-icon.orange { background: var(--gradient-warning); color: var(--text-dark); }
+
+        .stat-mini-box .stat-info .number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .stat-mini-box .stat-info .label {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .stat-mini-box .stat-info .loading-text {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            animation: pulse 1.5s infinite;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(67, 97, 238, 0.08);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 0.3rem;
+            transition: var(--transition);
+        }
+
+        .footer a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        .footer .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .footer .footer-brand img {
+            height: 30px;
+            width: auto;
+            object-fit: contain;
+            background: white;
+            padding: 2px;
+            border-radius: 4px;
+        }
+
+        .footer .footer-social {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .footer .footer-social a {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            color: var(--text-medium);
+            text-decoration: none;
+            margin: 0;
+        }
+
+        .footer .footer-social a:hover {
+            background: var(--gradient-main);
+            color: white;
+            transform: translateY(-3px);
+            text-decoration: none;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 0.4rem 1rem;
+                font-size: 0.65rem;
+                flex-direction: column;
+                text-align: center;
+                border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            }
+
+            .navbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+                border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+                padding: 1rem;
+            }
+
+            .logo {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .logo .logo-images img {
+                height: 32px;
+            }
+
+            .logo .logo-text .title {
+                font-size: 1rem;
+            }
+
+            .logo .logo-text .subtitle {
+                font-size: 0.5rem;
+            }
+
+            .logo .logo-divider {
+                display: none;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+
+            .nav-links a {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.7rem;
+            }
+
+            .app {
+                padding: 0 1rem 1.5rem;
+            }
+
+            .hero {
+                padding: 1.8rem 1.5rem;
+                flex-direction: column;
+                text-align: center;
+                border-radius: var(--radius-sm);
+            }
+
+            .hero-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .hero-content p {
+                font-size: 0.9rem;
+            }
+
+            .hero-logo {
+                margin-top: 1.2rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero-logo img {
+                height: 45px;
+            }
+
+            .hero-logo .divider {
+                display: none;
+            }
+
+            .hero-illustration {
+                display: none;
+            }
+
+            .hero-badges {
+                justify-content: center;
+            }
+
+            .archive-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .stats-mini {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .footer {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 1.2rem;
+            }
+
+            .hero-content p {
+                font-size: 0.8rem;
+            }
+
+            .hero {
+                padding: 1.2rem;
+            }
+
+            .card {
+                padding: 1.2rem;
+            }
+
+            .card h3 {
+                font-size: 1rem;
+            }
+
+            .card .btn {
+                font-size: 0.75rem;
+                padding: 0.4rem 1rem;
+            }
+
+            .stats-mini {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.6rem;
+            }
+
+            .stat-mini-box {
+                padding: 0.8rem;
+            }
+
+            .stat-mini-box .stat-info .number {
+                font-size: 1.1rem;
+            }
+
+            .logo .logo-images img {
+                height: 28px;
+            }
+
+            .logo .logo-icon {
+                font-size: 0.8rem;
+                padding: 0.2rem 0.6rem;
+            }
+
+            .logo .logo-text .title {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+
+        <!-- ===== TOP BAR ===== -->
+        <div class="top-bar">
+            <span><i class="fas fa-building"></i> Dinas PUPR Kab. Timor Tengah Selatan</span>
+            <span>
+                <i class="fas fa-envelope"></i> <a href="mailto:sipadi@pupr-tts.go.id">sipadi@pupr-tts.go.id</a>
+                <span class="status-indicator">
+                    <i class="fas fa-circle"></i> Data Real-time
+                </span>
+            </span>
+        </div>
+
+        <!-- ===== NAVBAR ===== -->
+        <nav class="navbar">
+            <div class="logo">
+                <div class="logo-images">
+                    <img src="img/tts.png" alt="Logo TTS" onerror="this.style.display='none'">
+                    <img src="img/pupr.png" alt="Logo PUPR" onerror="this.style.display='none'">
+                </div>
+                <span class="logo-divider"></span>
+                <span class="logo-icon"><i class="fas fa-archive"></i></span>
+                <div class="logo-text">
+                    <span class="title">SIPADI</span>
+                    <span class="subtitle">Sistem Pengelolaan Arsip Digital</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="active"><i class="fas fa-home"></i> Beranda</a>
+                <a href="admin/index.html" class="btn-admin"><i class="fas fa-user-shield"></i> Admin</a>
+            </div>
+        </nav>
+
+        <!-- ===== HERO ===== -->
+        <div class="hero">
+            <div class="hero-content">
+                <span class="badge-hero"><i class="fas fa-rocket"></i> Sistem Terintegrasi</span>
+                <h1><i class="fas fa-archive"></i> Arsip Digital Dinas PUPR TTS</h1>
+                <p>SIPADI memudahkan pengarsipan gaji, SPJ, dan pendapatan secara cepat, akurat, dan terintegrasi dengan Google Workspace.</p>
+                <div class="hero-badges">
+                    <span class="hero-badge"><i class="fas fa-check-circle"></i> Terintegrasi Google</span>
+                    <span class="hero-badge"><i class="fas fa-shield-alt"></i> Aman & Terpercaya</span>
+                    <span class="hero-badge"><i class="fas fa-sync-alt"></i> Real-time</span>
+                </div>
+            </div>
+            <div class="hero-logo">
+                <img src="img/tts.png" alt="Logo TTS" onerror="this.style.display='none'">
+                <span class="divider"></span>
+                <img src="img/pupr.png" alt="Logo PUPR" onerror="this.style.display='none'">
+                <div class="hero-illustration">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Google<br>Workspace</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== STATS MINI - DATA REAL ===== -->
+        <div class="stats-mini" id="statsMini">
+            <div class="stat-mini-box">
+                <div class="stat-icon blue"><i class="fas fa-file-invoice"></i></div>
+                <div class="stat-info">
+                    <div class="number" id="totalArsipHome">0</div>
+                    <div class="label">Total Arsip</div>
+                </div>
+            </div>
+            <div class="stat-mini-box">
+                <div class="stat-icon green"><i class="fas fa-money-bill-wave"></i></div>
+                <div class="stat-info">
+                    <div class="number" id="totalGajiHome">0</div>
+                    <div class="label">Arsip Gaji</div>
+                </div>
+            </div>
+            <div class="stat-mini-box">
+                <div class="stat-icon pink"><i class="fas fa-receipt"></i></div>
+                <div class="stat-info">
+                    <div class="number" id="totalSpjHome">0</div>
+                    <div class="label">Arsip SPJ</div>
+                </div>
+            </div>
+            <div class="stat-mini-box">
+                <div class="stat-icon orange"><i class="fas fa-coins"></i></div>
+                <div class="stat-info">
+                    <div class="number" id="totalPendapatanHome">0</div>
+                    <div class="label">Arsip Pendapatan</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 3 KARTU ARSIP ===== -->
+        <div class="section-title">
+            <i class="fas fa-pen-to-square"></i>
+            Isi Arsip
+            <span class="title-underline"></span>
+        </div>
+        <p class="section-desc">Pilih jenis arsip yang akan diisi. Data akan tersimpan otomatis di Google Spreadsheet dan Google Drive.</p>
+
+        <div class="archive-grid">
+            <!-- Kartu 1: Gaji -->
+            <div class="card">
+                <div class="card-icon-wrapper">
+                    <div class="card-icon gaji"><i class="fas fa-money-bill-wave"></i></div>
+                    <span class="card-badge"><i class="fas fa-star"></i> Populer</span>
+                </div>
+                <h3>Arsip Gaji</h3>
+                <p>Formulir pengarsipan data gaji pegawai, slip gaji, tunjangan, dan potongan. Lengkapi dengan berkas pendukung.</p>
+                <span class="badge-google"><i class="fab fa-google"></i> Google Form Terintegrasi</span>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfBJQVi9Hkmk_QELGIT2fK3oqCcKKzr6zhpUu_swXNWXK4Olw/viewform?usp=send_form" target="_blank" class="btn" style="margin-top:0.8rem;">
+                    <i class="fas fa-external-link-alt"></i> Isi Arsip Gaji
+                </a>
+            </div>
+
+            <!-- Kartu 2: SPJ -->
+            <div class="card">
+                <div class="card-icon-wrapper">
+                    <div class="card-icon spj"><i class="fas fa-receipt"></i></div>
+                    <span class="card-badge"><i class="fas fa-clock"></i> Cepat</span>
+                </div>
+                <h3>Arsip SPJ</h3>
+                <p>Formulir untuk mengarsipkan Surat Pertanggungjawaban (SPJ) keuangan kegiatan. Upload dokumen pendukung dan rincian biaya.</p>
+                <span class="badge-google"><i class="fab fa-google"></i> Google Form Terintegrasi</span>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeWbAnrwHi4Z6IFyPczdVVypeqtmKqGpEwiMTOrUDHfQBlxRw/viewform?usp=send_form" target="_blank" class="btn btn-success" style="margin-top:0.8rem;">
+                    <i class="fas fa-external-link-alt"></i> Isi Arsip SPJ
+                </a>
+            </div>
+
+            <!-- Kartu 3: Pendapatan -->
+            <div class="card">
+                <div class="card-icon-wrapper">
+                    <div class="card-icon pendapatan"><i class="fas fa-coins"></i></div>
+                    <span class="card-badge"><i class="fas fa-chart-line"></i> Analisis</span>
+                </div>
+                <h3>Arsip Pendapatan</h3>
+                <p>Formulir untuk mencatat arsip pendapatan unit kerja, seperti penerimaan rutin, hibah, atau pendapatan lain-lain.</p>
+                <span class="badge-google"><i class="fab fa-google"></i> Google Form Terintegrasi</span>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSchV4s_5f2FjY9m0L8W1w7Mo2ErhPB3JsD2ATX6sOryTKbMSQ/viewform?usp=send_form" target="_blank" class="btn btn-warning" style="margin-top:0.8rem;">
+                    <i class="fas fa-external-link-alt"></i> Isi Arsip Pendapatan
+                </a>
+            </div>
+        </div>
+
+        <!-- ===== FOOTER ===== -->
+        <div class="footer">
+            <div class="footer-brand">
+                <img src="img/tts.png" alt="TTS" onerror="this.style.display='none'">
+                <img src="img/pupr.png" alt="PUPR" onerror="this.style.display='none'">
+                <span>© 2026 SIPADI · Dinas PUPR Kab. Timor Tengah Selatan</span>
+            </div>
+            <div class="footer-social">
+                <a href="#"><i class="fab fa-google"></i></a>
+                <a href="#"><i class="fas fa-database"></i></a>
+                <a href="#"><i class="fas fa-chart-line"></i></a>
+                <a href="admin/index.html"><i class="fas fa-user-shield"></i></a>
+            </div>
+            <span>
+                <a href="#"><i class="fab fa-google"></i> Drive</a>
+                <a href="#"><i class="fab fa-google"></i> Spreadsheet</a>
+                <a href="#"><i class="fab fa-google"></i> Form</a>
+                <a href="admin/index.html"><i class="fas fa-user-shield"></i> Admin</a>
+            </span>
+        </div>
+
+        <div style="text-align:center; font-size:0.75rem; color:var(--text-light); padding:0.8rem 0 0.2rem;">
+            <i class="fas fa-database" style="color:var(--primary);"></i> Database terintegrasi · 
+            <i class="fas fa-chart-line" style="color:var(--success);"></i> Dashboard real-time · 
+            <i class="fas fa-bolt" style="color:var(--warning);"></i> Cepat & Akurat
+        </div>
+    </div>
+
+    <!-- ===== JAVASCRIPT UNTUK MENGAMBIL DATA REAL ===== -->
+    <script>
+        /**
+         * ============================================
+         * SCRIPT INDEX - Mengambil Data Real dari Admin
+         * ============================================
+         */
+        
+        // Link CSV yang sama dengan admin
+        const CSV_URLS = {
+            gaji: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRHfk7N8mH_aqtXb5CkYgM-eljBJIAAJTZm64_DpjfJnPjVGr5XVEOfQULwU9WnPdSW19HTK7kPvBy/pub?output=csv',
+            spj: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRn_PZVaLhCSrdT6nNOLmXLBKwiGIke69_9mZUD0wq0Wjv-4BY7sfKgsvJTQjiV-UpnVIyJfoBFyPux/pub?output=csv',
+            pendapatan: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0DzeTB-OsTHj7_-38kzUNZKM-d1uo8rUuSXDFZXKt3yQYdDRKFyZnZhqIL3dzA9ROuns4Zpr8rASp/pub?output=csv'
+        };
+
+        // Fungsi untuk mengambil data dari CSV
+        async function fetchCSVData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const csvText = await response.text();
+                const rows = csvText.split('\n').filter(row => row.trim() !== '');
+                
+                // Skip header
+                let startRow = 0;
+                if (rows.length > 0) {
+                    const firstRow = rows[0].toLowerCase();
+                    if (firstRow.includes('nomor') || firstRow.includes('no') || 
+                        firstRow.includes('dokumen') || firstRow.includes('tanggal')) {
+                        startRow = 1;
+                    }
+                }
+                
+                // Hitung jumlah data (non-header, non-empty)
+                let count = 0;
+                for (let i = startRow; i < rows.length; i++) {
+                    const cols = rows[i].split(',').map(c => c.trim());
+                    if (cols.length > 0 && cols[0] && cols[0].length > 1) {
+                        // Skip jika ini header (jika tidak terdeteksi sebelumnya)
+                        if (!cols[0].toLowerCase().includes('nomor') && 
+                            !cols[0].toLowerCase().includes('no')) {
+                            count++;
+                        }
+                    }
+                }
+                return count;
+            } catch (error) {
+                console.warn('Error fetching CSV:', error);
+                return 0;
+            }
+        }
+
+        // Fungsi untuk update statistik
+        async function updateStats() {
+            // Tampilkan loading
+            document.querySelectorAll('.stat-mini-box .stat-info .number').forEach(el => {
+                el.textContent = '...';
+            });
+
+            try {
+                // Ambil data dari semua CSV secara paralel
+                const [gajiCount, spjCount, pendapatanCount] = await Promise.all([
+                    fetchCSVData(CSV_URLS.gaji),
+                    fetchCSVData(CSV_URLS.spj),
+                    fetchCSVData(CSV_URLS.pendapatan)
+                ]);
+
+                const total = gajiCount + spjCount + pendapatanCount;
+
+                // Update DOM
+                document.getElementById('totalArsipHome').textContent = total;
+                document.getElementById('totalGajiHome').textContent = gajiCount;
+                document.getElementById('totalSpjHome').textContent = spjCount;
+                document.getElementById('totalPendapatanHome').textContent = pendapatanCount;
+
+                console.log(`✅ Data real dimuat: Total=${total}, Gaji=${gajiCount}, SPJ=${spjCount}, Pendapatan=${pendapatanCount}`);
+
+            } catch (error) {
+                console.error('Error updating stats:', error);
+                document.querySelectorAll('.stat-mini-box .stat-info .number').forEach(el => {
+                    el.textContent = '0';
+                });
+            }
+        }
+
+        // Jalankan saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tampilkan loading
+            console.log('📊 Memuat data real dari spreadsheet...');
+            updateStats();
+
+            // Refresh setiap 30 detik
+            setInterval(updateStats, 30000);
+        });
+
+        console.log('✅ SIPADI - Menampilkan data real dari Google Spreadsheet!');
+        console.log('📌 Data akan diperbarui setiap 30 detik.');
+    </script>
+</body>
+</html>
