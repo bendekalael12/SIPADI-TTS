@@ -720,6 +720,83 @@ tr:hover td {
     color: var(--text-dark);
 }
 
+/* ============================================
+   TOMBOL AKSI - HAPUS, BUKA FILE, & DOWNLOAD
+   ============================================ */
+
+.btn-aksi {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.75rem;
+    margin: 0 0.15rem;
+    color: white;
+}
+
+.btn-aksi:hover {
+    transform: scale(1.1);
+}
+
+.btn-detail {
+    background: var(--primary);
+}
+
+.btn-detail:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 2px 12px rgba(67, 97, 238, 0.4);
+}
+
+.btn-file {
+    background: #4285f4;
+}
+
+.btn-file:hover {
+    background: #3367d6;
+    box-shadow: 0 2px 12px rgba(66, 133, 244, 0.4);
+}
+
+.btn-download {
+    background: #2ecc71;
+}
+
+.btn-download:hover {
+    background: #27ae60;
+    box-shadow: 0 2px 12px rgba(46, 204, 113, 0.4);
+}
+
+.btn-edit {
+    background: var(--warning);
+    color: var(--text-dark);
+}
+
+.btn-edit:hover {
+    background: #e6c200;
+    box-shadow: 0 2px 12px rgba(255, 209, 102, 0.4);
+}
+
+.btn-delete {
+    background: var(--danger);
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+    box-shadow: 0 2px 12px rgba(239, 71, 111, 0.4);
+}
+
+/* Style untuk tombol aksi di tabel */
+td .btn-aksi {
+    margin: 0.1rem 0.15rem;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -892,6 +969,12 @@ tr:hover td {
     .search-filters {
         justify-content: center;
     }
+
+    .btn-aksi {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -934,5 +1017,11 @@ tr:hover td {
     .footer {
         flex-direction: column;
         text-align: center;
+    }
+
+    .btn-aksi {
+        width: 24px;
+        height: 24px;
+        font-size: 0.6rem;
     }
 }
