@@ -661,12 +661,6 @@
             font-weight: 500;
         }
 
-        .stat-mini-box .stat-info .loading-text {
-            font-size: 0.7rem;
-            color: var(--text-light);
-            animation: pulse 1.5s infinite;
-        }
-
         /* ============================================
            FOOTER
            ============================================ */
@@ -1152,11 +1146,8 @@
 
         // Jalankan saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
-            // Tampilkan loading
             console.log('📊 Memuat data real dari spreadsheet...');
             updateStats();
-
-            // Refresh setiap 30 detik
             setInterval(updateStats, 30000);
         });
 
