@@ -2,19 +2,67 @@
  * ============================================
  * ADMIN SCRIPT - SIPADI Dinas PUPR TTS
  * Data Real dari Google Spreadsheet (CSV Export)
+ * Fitur: Hapus Data, Buka File, & Download File
  * ============================================
  */
 
 // ============================================
-// KONFIGURASI - LINK CSV DARI SPREADSHEET
+// ★★★ KOSONGKAN FIELD LOGIN SAAT LOAD ★★★
+// ============================================
+(function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', clearLoginFields);
+    } else {
+        clearLoginFields();
+    }
+    
+    function clearLoginFields() {
+        const usernameField = document.getElementById('username');
+        const passwordField = document.getElementById('password');
+        if (usernameField) {
+            usernameField.value = '';
+            usernameField.setAttribute('autocomplete', 'off');
+            setTimeout(() => { usernameField.value = ''; }, 50);
+            setTimeout(() => { usernameField.value = ''; }, 200);
+            setTimeout(() => { usernameField.value = ''; }, 500);
+        }
+        if (passwordField) {
+            passwordField.value = '';
+            passwordField.setAttribute('autocomplete', 'off');
+            setTimeout(() => { passwordField.value = ''; }, 50);
+            setTimeout(() => { passwordField.value = ''; }, 200);
+            setTimeout(() => { passwordField.value = ''; }, 500);
+        }
+    }
+})();
+
+// ============================================
+// KONFIGURASI - WEB APP URL TERBARU
 // ============================================
 const CONFIG = {
-    // ★★★ LINK CSV DARI SPREADSHEET YANG SUDAH DIPUBLIKASIKAN ★★★
+    // Link CSV publik untuk membaca data
     csvUrls: {
         gaji: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRHfk7N8mH_aqtXb5CkYgM-eljBJIAAJTZm64_DpjfJnPjVGr5XVEOfQULwU9WnPdSW19HTK7kPvBy/pub?output=csv',
         spj: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRn_PZVaLhCSrdT6nNOLmXLBKwiGIke69_9mZUD0wq0Wjv-4BY7sfKgsvJTQjiV-UpnVIyJfoBFyPux/pub?output=csv',
         pendapatan: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0DzeTB-OsTHj7_-38kzUNZKM-d1uo8rUuSXDFZXKt3yQYdDRKFyZnZhqIL3dzA9ROuns4Zpr8rASp/pub?output=csv'
     },
+    
+    // Spreadsheet ID untuk operasi hapus
+    spreadsheetIds: {
+        gaji: '1oR0s0nukj1kRH777unUtAm-YZL7lXiIxunYfvb5u9S0',
+        spj: '13HtzcwDZzHFL6x1o6Faq0O-n9Vxfbd9HE7z0GYPq9GU',
+        pendapatan: '1ZS2ljK47mtjlB-1Wv27X9hFA5WgV-DFgh_7exhm76Iw'
+    },
+    
+    // ★★★ WEB APP URL TERBARU ★★★
+    webAppUrls: {
+        gaji: 'https://script.google.com/macros/s/AKfycbyPT3E4x3s4dymNiR35LCFYhGJqwLDIQIhPNmIcwvVyeteBQt2i1isq-W_L8PgeOJAZ9w/exec',
+        spj: 'https://script.google.com/macros/s/AKfycbyg5h6Arqo9A3PBO--JkSfyzzZy5iHSI4xDQ5vPz_dnLBFkm4O418rd6IXhfjno6FpiNg/exec',
+        pendapatan: 'https://script.google.com/macros/s/AKfycbzws_VrZ7xd3PATgTsN2k0taqWqBT6IeR_ZhyA7f2sacNUWVai6shF2-TB2ocoGZEAUkQ/exec'
+    },
+    
+    // ★★★ NAMA SHEET YANG BENAR ★★★
+    sheetName: 'Form Responses 1',
     
     defaultStatus: 'Diproses'
 };
@@ -45,6 +93,8 @@ function handleLogin(e) {
         }, 500);
     } else {
         alert('❌ Username atau password salah!\n\nGunakan:\nUsername: admin\nPassword: admin123');
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
     }
 }
 
@@ -55,13 +105,13 @@ function handleLogout() {
     if (confirm('Yakin ingin keluar dari Admin Panel?')) {
         document.getElementById('adminPage').style.display = 'none';
         document.getElementById('loginPage').style.display = 'flex';
-        document.getElementById('username').value = 'admin';
-        document.getElementById('password').value = 'admin123';
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
     }
 }
 
 // ============================================
-// FUNGSI FETCH DATA DARI CSV (REAL DATA)
+// FUNGSI FETCH DATA DARI CSV
 // ============================================
 function fetchDataFromSpreadsheet() {
     if (isLoading) return;
@@ -93,7 +143,6 @@ function fetchDataFromSpreadsheet() {
                 }
             });
             
-            // Jika tidak ada data sama sekali, tampilkan pesan
             if (!hasData) {
                 statusEl.innerHTML = '<i class="fas fa-info-circle" style="color:#f39c12;"></i> Belum ada data di spreadsheet';
                 showEmptyData();
@@ -124,14 +173,20 @@ function fetchDataFromSpreadsheet() {
 // ============================================
 async function fetchCSVData(type) {
     try {
-        const csvUrl = CONFIG.csvUrls[type];
+        let csvUrl = CONFIG.csvUrls[type];
         if (!csvUrl) {
             return { success: false, data: [], error: 'CSV URL not configured' };
         }
         
-        console.log(`📊 Mengambil data ${type} dari CSV real:`, csvUrl.substring(0, 60) + '...');
+        // ★★★ PERBAIKI: Tambahkan cache buster dengan '&' bukan '?' ★★★
+        if (csvUrl.includes('?')) {
+            csvUrl += '&t=' + Date.now();
+        } else {
+            csvUrl += '?t=' + Date.now();
+        }
         
-        // Gunakan fetch dengan mode untuk menghindari CORS jika perlu
+        console.log(`📊 Mengambil data ${type} dari CSV:`, csvUrl.substring(0, 80) + '...');
+        
         const response = await fetch(csvUrl, {
             method: 'GET',
             headers: {
@@ -140,7 +195,29 @@ async function fetchCSVData(type) {
         });
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Fallback tanpa cache buster
+            console.warn(`⚠️ Gagal dengan cache buster, mencoba tanpa parameter...`);
+            const fallbackUrl = CONFIG.csvUrls[type];
+            const fallbackResponse = await fetch(fallbackUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'text/csv'
+                }
+            });
+            
+            if (!fallbackResponse.ok) {
+                throw new Error(`HTTP error! status: ${fallbackResponse.status}`);
+            }
+            
+            const fallbackText = await fallbackResponse.text();
+            const fallbackRows = fallbackText.split('\n').filter(row => row.trim() !== '');
+            
+            if (fallbackRows.length <= 1) {
+                return { success: true, data: [] };
+            }
+            
+            const fallbackData = parseCSVData(fallbackRows, type);
+            return { success: true, data: fallbackData };
         }
         
         const csvText = await response.text();
@@ -158,7 +235,37 @@ async function fetchCSVData(type) {
         
     } catch (error) {
         console.warn(`Error fetching ${type} data:`, error.message);
-        return { success: false, data: [], error: error.message };
+        
+        // ★★★ FALLBACK: Coba tanpa cache buster ★★★
+        try {
+            console.log(`🔄 Mencoba fallback tanpa cache buster untuk ${type}...`);
+            const fallbackUrl = CONFIG.csvUrls[type];
+            const fallbackResponse = await fetch(fallbackUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'text/csv'
+                }
+            });
+            
+            if (!fallbackResponse.ok) {
+                throw new Error(`HTTP error! status: ${fallbackResponse.status}`);
+            }
+            
+            const fallbackText = await fallbackResponse.text();
+            const fallbackRows = fallbackText.split('\n').filter(row => row.trim() !== '');
+            
+            if (fallbackRows.length <= 1) {
+                return { success: true, data: [] };
+            }
+            
+            const fallbackData = parseCSVData(fallbackRows, type);
+            console.log(`✅ Fallback berhasil untuk ${type}: ${fallbackData.length} entri`);
+            return { success: true, data: fallbackData };
+            
+        } catch (fallbackError) {
+            console.warn(`Fallback juga gagal untuk ${type}:`, fallbackError.message);
+            return { success: false, data: [], error: error.message };
+        }
     }
 }
 
@@ -169,52 +276,129 @@ function parseCSVData(rows, type) {
     const data = [];
     const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
     
-    // Deteksi header
     let startRow = 0;
     const firstRow = rows[0] || '';
     const firstRowLower = firstRow.toLowerCase();
     
-    // Cek apakah baris pertama adalah header
-    if (firstRowLower.includes('nomor') || firstRowLower.includes('no') || 
-        firstRowLower.includes('dokumen') || firstRowLower.includes('tanggal') ||
-        firstRowLower.includes('status') || firstRowLower.includes('nama') ||
-        firstRowLower.includes('timestamp') || firstRowLower.includes('waktu')) {
+    // Deteksi header
+    let colMap = {};
+    
+    if (firstRowLower.includes('timestamp') || firstRowLower.includes('waktu') || 
+        firstRowLower.includes('nomor') || firstRowLower.includes('no')) {
         startRow = 1;
-        console.log(`📋 Header detected di ${type}, skip baris 0`);
+        const headerCols = parseCSVRow(rows[0]);
+        
+        // Mapping kolom berdasarkan jenis arsip
+        const columnMappings = {
+            gaji: {
+                timestamp: ['timestamp', 'waktu', 'tgl'],
+                nomor: ['nomor', 'no', 'nip', 'id'],
+                tanggal: ['tanggal', 'tgl', 'date'],
+                status: ['status', 'keterangan'],
+                nama: ['nama', 'pegawai', 'name'],
+                nilai: ['total', 'gaji', 'jumlah', 'nilai'],
+                fileLink: ['file', 'link', 'upload', 'dokumen', 'attachment']
+            },
+            spj: {
+                timestamp: ['timestamp', 'waktu', 'tgl'],
+                nomor: ['nomor', 'no', 'spj', 'id'],
+                tanggal: ['tanggal', 'tgl', 'date'],
+                status: ['status', 'keterangan'],
+                nama: ['nama', 'kegiatan', 'uraian'],
+                nilai: ['nilai', 'total', 'jumlah'],
+                fileLink: ['file', 'link', 'upload', 'dokumen', 'attachment']
+            },
+            pendapatan: {
+                timestamp: ['timestamp', 'waktu', 'tgl'],
+                nomor: ['nomor', 'no', 'id'],
+                tanggal: ['tanggal', 'tgl', 'date'],
+                status: ['status', 'keterangan'],
+                nama: ['sumber', 'nama', 'uraian'],
+                nilai: ['jumlah', 'total', 'nilai'],
+                fileLink: ['file', 'link', 'upload', 'dokumen', 'attachment']
+            }
+        };
+        
+        const mappings = columnMappings[type] || columnMappings.gaji;
+        
+        // Cari index untuk setiap kolom
+        headerCols.forEach((col, idx) => {
+            const lower = col.toLowerCase().trim();
+            
+            if (mappings.timestamp.some(k => lower.includes(k))) {
+                colMap.timestamp = idx;
+            } else if (mappings.nomor.some(k => lower.includes(k))) {
+                colMap.nomor = idx;
+            } else if (mappings.tanggal.some(k => lower.includes(k))) {
+                colMap.tanggal = idx;
+            } else if (mappings.status.some(k => lower.includes(k))) {
+                colMap.status = idx;
+            } else if (mappings.nama.some(k => lower.includes(k))) {
+                colMap.nama = idx;
+            } else if (mappings.nilai.some(k => lower.includes(k))) {
+                colMap.nilai = idx;
+            } else if (mappings.fileLink.some(k => lower.includes(k))) {
+                colMap.fileLink = idx;
+            }
+        });
+        
+        // Default mapping jika tidak ada yang terdeteksi
+        if (Object.keys(colMap).length === 0) {
+            colMap = { timestamp: 0, nomor: 1, tanggal: 2, status: 3, nama: 4, nilai: 5, fileLink: 6 };
+        }
+        
+        console.log(`📋 Kolom terdeteksi di ${type}:`, colMap);
     }
     
     for (let i = startRow; i < rows.length; i++) {
         const cols = parseCSVRow(rows[i]);
         
-        // Skip baris kosong
         if (cols.length === 0 || (cols.length === 1 && !cols[0].trim())) {
             continue;
         }
         
-        // Ambil data - kolom 0 = nomor, 1 = tanggal, 2 = status
-        const nomor = cols[0]?.trim() || `-`;
-        const tanggal = cols[1]?.trim() || new Date().toISOString().split('T')[0];
-        const status = cols[2]?.trim() || CONFIG.defaultStatus || 'Diproses';
+        // Ambil data dengan fallback ke posisi default
+        const nomor = colMap.nomor !== undefined ? (cols[colMap.nomor]?.trim() || `-`) : (cols[1]?.trim() || `-`);
+        const tanggalRaw = colMap.tanggal !== undefined ? (cols[colMap.tanggal]?.trim() || '') : (cols[2]?.trim() || '');
+        const status = colMap.status !== undefined ? (cols[colMap.status]?.trim() || CONFIG.defaultStatus) : (cols[3]?.trim() || CONFIG.defaultStatus);
+        const nama = colMap.nama !== undefined ? (cols[colMap.nama]?.trim() || '-') : (cols[4]?.trim() || '-');
+        const nilai = colMap.nilai !== undefined ? (cols[colMap.nilai]?.trim() || '-') : (cols[5]?.trim() || '-');
+        const fileLink = colMap.fileLink !== undefined ? (cols[colMap.fileLink]?.trim() || '') : (cols[6]?.trim() || '');
         
-        // Jangan tambahkan data jika nomor kosong
+        // Skip jika nomor kosong atau header
         if (nomor === '-' || nomor.length < 2) continue;
-        
-        // Cek apakah ini baris header (jika tidak terdeteksi sebelumnya)
         if (nomor.toLowerCase().includes('nomor') || nomor.toLowerCase().includes('no')) {
             continue;
         }
         
-        // Format tanggal
-        const formattedDate = formatDate(tanggal);
+        // Format tanggal dengan lebih baik
+        let formattedDate = formatDate(tanggalRaw);
+        if (formattedDate === '-' || formattedDate === 'Invalid Date') {
+            const timestamp = colMap.timestamp !== undefined ? (cols[colMap.timestamp]?.trim() || '') : (cols[0]?.trim() || '');
+            formattedDate = formatDate(timestamp);
+        }
+        
+        // Normalisasi status
+        let normalizedStatus = status;
+        const statusLower = status.toLowerCase();
+        if (statusLower.includes('lunas') || statusLower.includes('selesai') || statusLower.includes('sudah')) {
+            normalizedStatus = 'Selesai';
+        } else if (statusLower.includes('proses') || statusLower.includes('diproses') || statusLower.includes('berjalan')) {
+            normalizedStatus = 'Diproses';
+        } else if (statusLower.includes('pending') || statusLower.includes('tunda') || statusLower.includes('belum')) {
+            normalizedStatus = 'Pending';
+        }
         
         data.push({
             id: Date.now() + i,
+            rowIndex: i,
             nomor: nomor,
             tanggal: formattedDate,
-            status: status,
+            status: normalizedStatus,
             jenis: typeLabel,
-            nama: cols[3]?.trim() || '-',
-            nilai: cols[4]?.trim() || '-'
+            nama: nama,
+            nilai: nilai,
+            fileLink: fileLink
         });
     }
     
@@ -223,7 +407,7 @@ function parseCSVData(rows, type) {
 }
 
 // ============================================
-// FUNGSI PARSE CSV ROW (Handle koma dalam string)
+// FUNGSI PARSE CSV ROW
 // ============================================
 function parseCSVRow(row) {
     const result = [];
@@ -250,22 +434,188 @@ function parseCSVRow(row) {
 // ============================================
 function formatDate(dateStr) {
     if (!dateStr) return new Date().toISOString().split('T')[0];
+    
     try {
+        // Format: "18/06/2026 12:51:09 (18/06/2026)"
+        let match = dateStr.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+        if (match) {
+            return `${match[3]}-${match[2]}-${match[1]}`;
+        }
+        
+        // Format: "2026-06-18"
+        match = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+        if (match) {
+            return `${match[1]}-${match[2]}-${match[3]}`;
+        }
+        
+        // Format: "18/06/2026"
+        match = dateStr.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+        if (match) {
+            return `${match[3]}-${match[2]}-${match[1]}`;
+        }
+        
         // Coba parse sebagai Date
         let date = new Date(dateStr);
         if (!isNaN(date) && dateStr !== 'Invalid Date') {
             return date.toISOString().split('T')[0];
         }
-        // Coba format DD/MM/YYYY atau MM/DD/YYYY
-        const parts = dateStr.split(/[\/\-.]/);
-        if (parts.length === 3) {
-            if (parts[0].length === 4) return `${parts[0]}-${parts[1]}-${parts[2]}`;
-            if (parts[2].length === 4) return `${parts[2]}-${parts[1]}-${parts[0]}`;
-        }
+        
         return dateStr;
     } catch (e) {
         return dateStr;
     }
+}
+
+// ============================================
+// FUNGSI HAPUS DATA (Via Google Apps Script Web App)
+// ============================================
+async function deleteDataFromSheet(type, rowIndex, nomor) {
+    if (!confirm(`Yakin ingin menghapus data ${nomor}?`)) {
+        return;
+    }
+    
+    const statusEl = document.getElementById('dataStatus');
+    statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus data dari spreadsheet...';
+    
+    try {
+        // Validasi rowIndex
+        if (rowIndex === undefined || rowIndex === null || rowIndex < 0) {
+            throw new Error('Row index tidak valid');
+        }
+        
+        // Hapus dari data lokal
+        const index = dataArsip[type].findIndex(d => d.rowIndex === rowIndex && d.nomor === nomor);
+        if (index !== -1) {
+            dataArsip[type].splice(index, 1);
+        }
+        
+        // Hapus dari spreadsheet via Web App
+        const webAppUrl = CONFIG.webAppUrls[type];
+        if (!webAppUrl) {
+            throw new Error('Web App URL tidak ditemukan untuk jenis arsip ini');
+        }
+        
+        const sheetId = CONFIG.spreadsheetIds[type];
+        const sheetName = CONFIG.sheetName || 'Form Responses 1';
+        
+        const url = `${webAppUrl}?sheetId=${sheetId}&rowIndex=${rowIndex + 1}&action=delete&sheetName=${encodeURIComponent(sheetName)}`;
+        
+        console.log(`🗑️ Menghapus baris ${rowIndex + 1} dari ${type}`);
+        console.log(`📡 URL: ${url}`);
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.error || 'Gagal menghapus data dari spreadsheet');
+        }
+        
+        console.log(`✅ Baris ${rowIndex + 1} berhasil dihapus`);
+        
+        statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#06d6a0;"></i> Data ${nomor} berhasil dihapus dari spreadsheet`;
+        updateDashboard();
+        performSearch();
+        
+    } catch (error) {
+        console.error('Error deleting data:', error);
+        statusEl.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> Gagal: ${error.message}`;
+        alert(`❌ Gagal menghapus data dari spreadsheet!\n\nError: ${error.message}\n\nData tetap dihapus dari tampilan.`);
+        updateDashboard();
+        performSearch();
+    }
+}
+
+// ============================================
+// FUNGSI BUKA FILE UPLOAD
+// ============================================
+function openFileLink(fileLink, nomor) {
+    if (!fileLink || fileLink === '') {
+        alert(`Tidak ada file yang diupload untuk ${nomor}`);
+        return;
+    }
+    window.open(fileLink, '_blank');
+}
+
+// ============================================
+// FUNGSI DOWNLOAD FILE
+// ============================================
+function downloadFile(fileLink, nomor) {
+    if (!fileLink || fileLink === '') {
+        alert(`Tidak ada file yang diupload untuk ${nomor}`);
+        return;
+    }
+    
+    const statusEl = document.getElementById('dataStatus');
+    statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengunduh file...';
+    
+    try {
+        fetch(fileLink)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                let filename = fileLink.split('/').pop().split('?')[0] || `file_${nomor}`;
+                if (!filename.includes('.')) {
+                    const ext = blob.type.split('/')[1] || 'bin';
+                    filename = `${filename}.${ext}`;
+                }
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#06d6a0;"></i> File berhasil diunduh`;
+                setTimeout(() => {
+                    const totalData = getAllData().length;
+                    statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#06d6a0;"></i> ${totalData} data real dimuat`;
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Error downloading file:', error);
+                window.open(fileLink, '_blank');
+                statusEl.innerHTML = `<i class="fas fa-info-circle" style="color:#f39c12;"></i> File dibuka di tab baru`;
+                setTimeout(() => {
+                    const totalData = getAllData().length;
+                    statusEl.innerHTML = `<i class="fas fa-check-circle" style="color:#06d6a0;"></i> ${totalData} data real dimuat`;
+                }, 3000);
+            });
+            
+    } catch (error) {
+        console.error('Error:', error);
+        alert(`❌ Gagal mengunduh file!\n\nError: ${error.message}`);
+        statusEl.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> Gagal mengunduh file';
+    }
+}
+
+// ============================================
+// FUNGSI DETAIL DATA
+// ============================================
+function showDetail(item) {
+    const detailMsg = `📄 DETAIL ARSIP
+━━━━━━━━━━━━━━━━━━━━
+📌 Nomor Dokumen: ${item.nomor}
+📁 Jenis Arsip: ${item.jenis}
+📅 Tanggal: ${item.tanggal}
+📊 Status: ${item.status}
+👤 Deskripsi: ${item.nama || '-'}
+💰 Nilai: ${item.nilai || '-'}
+${item.fileLink ? `📎 File: ${item.fileLink}` : '📎 Tidak ada file'}
+━━━━━━━━━━━━━━━━━━━━`;
+    alert(detailMsg);
 }
 
 // ============================================
@@ -365,7 +715,7 @@ function updateStatusCounts() {
 }
 
 // ============================================
-// TABLE DATA
+// TABLE DATA - DENGAN TOMBOL AKSI
 // ============================================
 function updateTable() {
     const tbody = document.getElementById('tableBody');
@@ -385,6 +735,14 @@ function updateTable() {
         else if (item.status === 'Pending') statusClass = 'pending';
         
         const deskripsi = item.nama && item.nama !== '-' ? ` (${item.nama})` : '';
+        const hasFile = item.fileLink && item.fileLink !== '';
+        
+        const typeMap = { 'Gaji': 'gaji', 'SPJ': 'spj', 'Pendapatan': 'pendapatan' };
+        const dataType = typeMap[item.jenis] || 'gaji';
+        
+        const itemJSON = JSON.stringify(item).replace(/"/g, '&quot;');
+        const fileLinkSafe = item.fileLink ? item.fileLink.replace(/'/g, "\\'") : '';
+        const nomorSafe = item.nomor ? item.nomor.replace(/'/g, "\\'") : '';
         
         return `
             <tr>
@@ -394,7 +752,20 @@ function updateTable() {
                 <td>${item.tanggal}</td>
                 <td><span class="status-badge ${statusClass}">${item.status}</span></td>
                 <td>
-                    <a href="#" class="btn btn-sm btn-outline" style="padding:0.15rem 0.8rem; font-size:0.7rem;" onclick="alert('Detail: ${item.nomor}\\nJenis: ${item.jenis}\\nTanggal: ${item.tanggal}\\nStatus: ${item.status}\\nDeskripsi: ${item.nama || '-'}\\nNilai: ${item.nilai || '-'}')">Detail</a>
+                    <button class="btn-aksi btn-detail" onclick="showDetail(${itemJSON})" title="Detail">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                    ${hasFile ? `
+                        <button class="btn-aksi btn-file" onclick="openFileLink('${fileLinkSafe}', '${nomorSafe}')" title="Buka File">
+                            <i class="fas fa-external-link-alt"></i>
+                        </button>
+                        <button class="btn-aksi btn-download" onclick="downloadFile('${fileLinkSafe}', '${nomorSafe}')" title="Download File">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    ` : ''}
+                    <button class="btn-aksi btn-delete" onclick="deleteDataFromSheet('${dataType}', ${item.rowIndex}, '${nomorSafe}')" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </td>
             </tr>
         `;
@@ -417,6 +788,14 @@ function updateAllDataTable() {
         else if (item.status === 'Pending') statusClass = 'pending';
         
         const deskripsi = item.nama && item.nama !== '-' ? ` (${item.nama})` : '';
+        const hasFile = item.fileLink && item.fileLink !== '';
+        
+        const typeMap = { 'Gaji': 'gaji', 'SPJ': 'spj', 'Pendapatan': 'pendapatan' };
+        const dataType = typeMap[item.jenis] || 'gaji';
+        
+        const itemJSON = JSON.stringify(item).replace(/"/g, '&quot;');
+        const fileLinkSafe = item.fileLink ? item.fileLink.replace(/'/g, "\\'") : '';
+        const nomorSafe = item.nomor ? item.nomor.replace(/'/g, "\\'") : '';
         
         return `
             <tr>
@@ -426,8 +805,23 @@ function updateAllDataTable() {
                 <td>${item.tanggal}</td>
                 <td><span class="status-badge ${statusClass}">${item.status}</span></td>
                 <td>
-                    <a href="#" class="btn btn-sm btn-outline" style="padding:0.15rem 0.8rem; font-size:0.7rem;" onclick="return false;">Detail</a>
-                    <a href="#" class="btn btn-sm" style="padding:0.15rem 0.8rem; font-size:0.7rem; background:#06d6a0;" onclick="return false;"><i class="fas fa-edit"></i></a>
+                    <button class="btn-aksi btn-detail" onclick="showDetail(${itemJSON})" title="Detail">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                    ${hasFile ? `
+                        <button class="btn-aksi btn-file" onclick="openFileLink('${fileLinkSafe}', '${nomorSafe}')" title="Buka File">
+                            <i class="fas fa-external-link-alt"></i>
+                        </button>
+                        <button class="btn-aksi btn-download" onclick="downloadFile('${fileLinkSafe}', '${nomorSafe}')" title="Download File">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    ` : ''}
+                    <button class="btn-aksi btn-edit" onclick="return false;" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-aksi btn-delete" onclick="deleteDataFromSheet('${dataType}', ${item.rowIndex}, '${nomorSafe}')" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </td>
             </tr>
         `;
@@ -435,14 +829,13 @@ function updateAllDataTable() {
 }
 
 // ============================================
-// CHARTS (DARI DATA REAL)
+// CHARTS
 // ============================================
 function updateCharts() {
     const totalGaji = dataArsip.gaji.length;
     const totalSpj = dataArsip.spj.length;
     const totalPendapatan = dataArsip.pendapatan.length;
 
-    // Chart Jenis
     const ctxJenis = document.getElementById('chartJenis').getContext('2d');
     if (chartJenis) chartJenis.destroy();
     chartJenis = new Chart(ctxJenis, {
@@ -467,7 +860,6 @@ function updateCharts() {
         }
     });
 
-    // Chart Tren
     const trenData = generateTrenData();
     const ctxTren = document.getElementById('chartTren').getContext('2d');
     if (chartTren) chartTren.destroy();
@@ -494,7 +886,6 @@ function updateCharts() {
         }
     });
 
-    // Chart Status
     const statusCounts = { Selesai: 0, Diproses: 0, Pending: 0 };
     getAllData().forEach(d => {
         if (d.status === 'Selesai') statusCounts.Selesai++;
@@ -527,7 +918,7 @@ function updateCharts() {
 }
 
 // ============================================
-// GENERATE TREN DATA (DARI DATA REAL)
+// GENERATE TREN DATA
 // ============================================
 function generateTrenData() {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
@@ -614,6 +1005,14 @@ function performSearch() {
         }
         
         const deskripsi = item.nama && item.nama !== '-' ? ` (${item.nama})` : '';
+        const hasFile = item.fileLink && item.fileLink !== '';
+        
+        const typeMap = { 'Gaji': 'gaji', 'SPJ': 'spj', 'Pendapatan': 'pendapatan' };
+        const dataType = typeMap[item.jenis] || 'gaji';
+        
+        const itemJSON = JSON.stringify(item).replace(/"/g, '&quot;');
+        const fileLinkSafe = item.fileLink ? item.fileLink.replace(/'/g, "\\'") : '';
+        const nomorSafe = item.nomor ? item.nomor.replace(/'/g, "\\'") : '';
 
         return `
             <tr>
@@ -622,7 +1021,22 @@ function performSearch() {
                 <td>${nomorDisplay}${deskripsi}</td>
                 <td>${item.tanggal}</td>
                 <td><span class="status-badge ${statusClass}">${item.status}</span></td>
-                <td><a href="#" class="btn btn-sm btn-outline" style="padding:0.15rem 0.8rem; font-size:0.7rem;" onclick="return false;">Detail</a></td>
+                <td>
+                    <button class="btn-aksi btn-detail" onclick="showDetail(${itemJSON})" title="Detail">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                    ${hasFile ? `
+                        <button class="btn-aksi btn-file" onclick="openFileLink('${fileLinkSafe}', '${nomorSafe}')" title="Buka File">
+                            <i class="fas fa-external-link-alt"></i>
+                        </button>
+                        <button class="btn-aksi btn-download" onclick="downloadFile('${fileLinkSafe}', '${nomorSafe}')" title="Download File">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    ` : ''}
+                    <button class="btn-aksi btn-delete" onclick="deleteDataFromSheet('${dataType}', ${item.rowIndex}, '${nomorSafe}')" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
             </tr>
         `;
     }).join('');
@@ -658,7 +1072,7 @@ function exportCSV() {
         return;
     }
     
-    const headers = ['No', 'Jenis Arsip', 'Nomor Dokumen', 'Tanggal', 'Status', 'Deskripsi', 'Nilai'];
+    const headers = ['No', 'Jenis Arsip', 'Nomor Dokumen', 'Tanggal', 'Status', 'Deskripsi', 'Nilai', 'File Link'];
     const rows = allData.map((item, index) => [
         index + 1,
         item.jenis,
@@ -666,7 +1080,8 @@ function exportCSV() {
         item.tanggal,
         item.status,
         item.nama || '-',
-        item.nilai || '-'
+        item.nilai || '-',
+        item.fileLink || ''
     ]);
     
     const csvContent = [
@@ -715,12 +1130,18 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 // ============================================
 // INISIALISASI
 // ============================================
-console.log('✅ SIPADI Admin Panel siap - Tanpa Data Dummy!');
+console.log('✅ SIPADI Admin Panel siap!');
 console.log('📌 Gunakan username: admin | password: admin123');
 console.log('📊 Mengambil data real dari Google Spreadsheet:');
 console.log('  - Gaji:', CONFIG.csvUrls.gaji.substring(0, 50) + '...');
 console.log('  - SPJ:', CONFIG.csvUrls.spj.substring(0, 50) + '...');
 console.log('  - Pendapatan:', CONFIG.csvUrls.pendapatan.substring(0, 50) + '...');
+console.log('🗑️ Web App URL untuk hapus data:');
+console.log('  - Gaji:', CONFIG.webAppUrls.gaji);
+console.log('  - SPJ:', CONFIG.webAppUrls.spj);
+console.log('  - Pendapatan:', CONFIG.webAppUrls.pendapatan);
+console.log('📋 Nama Sheet:', CONFIG.sheetName);
+console.log('📥 Fitur Download File: aktif');
 
 // Auto-fetch data saat halaman dimuat
 setTimeout(() => {
