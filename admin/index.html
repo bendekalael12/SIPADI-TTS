@@ -40,17 +40,23 @@
                 <p>Admin Panel</p>
                 <small>Dinas PUPR Kab. Timor Tengah Selatan</small>
             </div>
-            <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
+            <!-- ★★★ FORM DENGAN AUTOCOMPLETE OFF ★★★ -->
+            <form id="loginForm" class="login-form" onsubmit="handleLogin(event)" autocomplete="off">
+                <!-- ★★★ INPUT HIDDEN UNTUK MENIPU AUTOFILL ★★★ -->
+                <div style="display:none;">
+                    <input type="text" name="fakeusername" value="">
+                    <input type="password" name="fakepassword" value="">
+                </div>
                 <div class="form-group">
                     <label><i class="fas fa-user"></i> Username</label>
-                    <input type="text" id="username" placeholder="Masukkan username" value="admin" required>
+                    <input type="text" id="username" placeholder="Masukkan username" autocomplete="off" required>
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="password" placeholder="Masukkan password" value="admin123" required>
+                    <input type="password" id="password" placeholder="Masukkan password" autocomplete="off" required>
                 </div>
                 <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt"></i> Masuk ke Dashboard</button>
-                <p class="login-info">Gunakan <strong>admin</strong> / <strong>admin123</strong> untuk demo</p>
+                <p class="login-info">Gunakan <strong>admin</strong> / <strong>admin123</strong> untuk login</p>
                 <p class="login-info" style="margin-top:0.3rem;">
                     <a href="../indexx.html" style="color:var(--primary); text-decoration:none;">
                         <i class="fas fa-arrow-left"></i> Kembali ke Beranda
